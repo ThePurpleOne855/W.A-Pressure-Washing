@@ -1,0 +1,8 @@
+{
+  "name": "wa-pressure-washing",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "python3 -m http.server 3000 --directory PowerWash",
+    "start": "python3 -m http.server 3000 --directory PowerWash"
+  }
+}
