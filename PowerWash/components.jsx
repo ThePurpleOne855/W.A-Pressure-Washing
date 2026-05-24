@@ -61,9 +61,10 @@ function Nav({ page, goto }) {
           </div>
           <div className="nav-cta-group">
             <a className="phone-pill" href="tel:+14076841194">
-              <Icon.Phone size={16} />
+              <Icon.Phone size={15} />
               <span>(407) 684-1194</span>
             </a>
+            <span className="nav-divider" aria-hidden="true" />
             <button className="btn btn-primary btn-sm" onClick={() => goto('quote')}>Get a Free Quote</button>
             <button className="hamburger" onClick={() => setOpen(o => !o)} aria-label="Menu">
               {open ? <Icon.X /> : <Icon.Menu />}
@@ -81,8 +82,65 @@ function Nav({ page, goto }) {
   );
 }
 
+// ============ SERVICE REFERENCE MEDIA ============
+function serviceMediaUrl(kind, file) {
+  const base = (window.SERVICE_REFERENCE_MEDIA && window.SERVICE_REFERENCE_MEDIA.basePath) || 'assets/service-reference';
+  const folder = kind === 'video' ? 'videos' : 'images';
+  return `${base}/${folder}/${encodeURIComponent(file)}`;
+}
+
+function useServiceReferenceMedia() {
+  return window.SERVICE_REFERENCE_MEDIA || { images: [], videos: [], featured: { images: [], videos: [] } };
+}
+
+function JobPhoto({ file, className = '' }) {
+  const src = serviceMediaUrl('image', file);
+  const label = file.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ');
+  return (
+    <figure className={'job-photo ' + className}>
+      <img src={src} alt={'Pressure washing job — ' + label} loading="lazy" decoding="async" />
+    </figure>
+  );
+}
+
+function JobVideo({ file }) {
+  const src = serviceMediaUrl('video', file);
+  const label = file.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ');
+  return (
+    <figure className="job-video">
+      <video
+        src={src}
+        controls
+        playsInline
+        preload="metadata"
+        aria-label={'Job footage — ' + label}
+      />
+    </figure>
+  );
+}
+
+function RealWorkPhotos({ files, limit }) {
+  const list = (files || []).slice(0, limit || files.length);
+  if (!list.length) return null;
+  return (
+    <div className="job-photo-grid">
+      {list.map(f => <JobPhoto key={f} file={f} />)}
+    </div>
+  );
+}
+
+function RealWorkVideos({ files, limit }) {
+  const list = (files || []).slice(0, limit || files.length);
+  if (!list.length) return null;
+  return (
+    <div className="job-video-grid">
+      {list.map(f => <JobVideo key={f} file={f} />)}
+    </div>
+  );
+}
+
 // ============ BEFORE/AFTER SLIDER ============
-function BeforeAfter({ scene, caption, meta }) {
+function BeforeAfter({ scene, beforeSrc, afterSrc, caption, meta, beforeAlt, afterAlt }) {
   const [pos, setPos] = React.useState(50);
   const ref = React.useRef(null);
   const dragging = React.useRef(false);
@@ -121,21 +179,30 @@ function BeforeAfter({ scene, caption, meta }) {
   }, []);
 
   const SceneCmp = SCENES[scene] || SCENES.driveway;
+  const usePhotos = beforeSrc && afterSrc;
 
   return (
     <div>
       <div
-        className="ba-wrapper"
+        className={'ba-wrapper' + (usePhotos ? ' ba-wrapper--photo' : '')}
         ref={ref}
         onMouseDown={onDown}
         onTouchStart={onDown}
         style={{ '--pos': pos + '%', cursor: 'ew-resize' }}
       >
         <div className="ba-layer before">
-          <SceneCmp state="dirty" />
+          {usePhotos ? (
+            <img className="ba-photo" src={beforeSrc} alt={beforeAlt || 'Before pressure washing'} draggable={false} />
+          ) : (
+            <SceneCmp state="dirty" />
+          )}
         </div>
         <div className="ba-layer after" style={{ clipPath: `inset(0 0 0 ${pos}%)` }}>
-          <SceneCmp state="clean" />
+          {usePhotos ? (
+            <img className="ba-photo" src={afterSrc} alt={afterAlt || 'After pressure washing'} draggable={false} />
+          ) : (
+            <SceneCmp state="clean" />
+          )}
         </div>
         <span className="ba-label before">Before</span>
         <span className="ba-label after">After</span>
@@ -193,16 +260,12 @@ const SCENES = {
 };
 
 // ============ SERVICE CARD ============
-function ServiceCard({ icon, title, desc, priceFrom, onClick }) {
+function ServiceCard({ icon, title, desc, onClick }) {
   return (
     <div className="service-card" onClick={onClick} style={{cursor:'pointer'}}>
       <div className="service-icon-wrap">{icon}</div>
       <h3>{title}</h3>
       <p>{desc}</p>
-      <div className="price-from">
-        <span className="label">Starting at</span>
-        <span className="amount">${priceFrom}</span>
-      </div>
       <a className="learn">Learn more <Icon.ArrowRight size={14} /></a>
     </div>
   );
@@ -324,4 +387,7 @@ function FloatingCTA({ goto, page }) {
 }
 
 // Share to window
-Object.assign(window, { Icon, Nav, BeforeAfter, SCENES, ServiceCard, Testimonials, Footer, FloatingCTA });
+Object.assign(window, {
+  Icon, Nav, BeforeAfter, SCENES, ServiceCard, Testimonials, Footer, FloatingCTA,
+  useServiceReferenceMedia, JobPhoto, JobVideo, RealWorkPhotos, RealWorkVideos,
+});

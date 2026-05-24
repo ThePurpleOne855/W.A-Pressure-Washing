@@ -25,7 +25,12 @@ function HomePage({ goto }) {
             </div>
           </div>
           <div>
-            <BeforeAfter scene="driveway" caption="Driveway & walkway · Poinciana" meta="Drag to compare" />
+            <BeforeAfter
+              beforeSrc="assets/before-after/before.JPEG"
+              afterSrc="assets/before-after/after.JPEG"
+              caption="Real job — drag to compare"
+              meta="Before & after"
+            />
           </div>
         </div>
       </section>
@@ -54,21 +59,18 @@ function HomePage({ goto }) {
               icon={<Icon.Home size={26} />}
               title="House Washing"
               desc="Soft-wash siding, stucco, brick, and soffits. Removes algae, pollen, and Florida's signature black streaks without damaging paint or plants."
-              priceFrom="249"
               onClick={() => goto('services')}
             />
             <ServiceCard
               icon={<Icon.Road size={26} />}
               title="Driveway & Sidewalk"
               desc="Surface cleaner + high-pressure rinse lifts oil stains, tire marks, and ground-in dirt from concrete, pavers, and walkways."
-              priceFrom="179"
               onClick={() => goto('services')}
             />
             <ServiceCard
               icon={<Icon.Deck size={26} />}
               title="Deck & Fence"
               desc="Low-pressure wood-safe cleaning restores your deck and fence without raising the grain or stripping stain. Ready for re-seal in 48 hours."
-              priceFrom="219"
               onClick={() => goto('services')}
             />
           </div>
@@ -86,15 +88,22 @@ function HomePage({ goto }) {
             <h2>The results speak for themselves.</h2>
             <p>Drag the slider on any photo below. Real jobs from real neighbors — no stock photography.</p>
           </div>
-          <div className="gallery-grid">
-            <BeforeAfter scene="siding" caption="Two-story vinyl siding" meta="Celebration, FL · Sept '25" />
-            <BeforeAfter scene="deck" caption="Cedar deck + railings" meta="St. Cloud, FL · Oct '25" />
+          <div className="gallery-grid gallery-grid--single">
+            <BeforeAfter
+              beforeSrc="assets/before-after/pool1before.JPEG"
+              afterSrc="assets/before-after/pool1after.JPEG"
+              caption="Pool deck & patio"
+              meta="Real job — drag to compare"
+            />
           </div>
           <div style={{textAlign:'center', marginTop:40}}>
             <button className="btn btn-navy" onClick={() => goto('gallery')}>Browse the full gallery <Icon.ArrowRight size={14} /></button>
           </div>
         </div>
       </section>
+
+      {/* REAL JOB MEDIA */}
+      <RealWorkSection goto={goto} compact />
 
       {/* WHY US */}
       <section className="section">
@@ -188,21 +197,18 @@ function ServicesPage({ goto }) {
       title: 'House Washing',
       desc: 'Soft-wash cleaning for vinyl, stucco, brick, Hardie board, and painted wood. Lifts algae, pollen, mildew, and the black streaks Florida humidity creates, without damaging landscaping or finishes.',
       tags: ['Soft-wash safe', 'Vinyl · Stucco · Brick · Hardie', 'Includes soffit & gutter face', 'Plant pre-rinse'],
-      price: 249,
     },
     {
       icon: <Icon.Road size={56} />,
       title: 'Driveway & Sidewalk',
       desc: 'Commercial surface cleaner for even, streak-free flatwork. Optional post-treatment seal for pavers. Tackles oil spots, rust stains, and tire marks that a garden hose can\'t touch.',
       tags: ['Concrete · Pavers · Brick', 'Oil & rust spot treatment', 'Optional paver re-sand & seal', 'HOA-compliant'],
-      price: 179,
     },
     {
       icon: <Icon.Deck size={56} />,
       title: 'Deck & Fence',
       desc: 'Low-pressure wood-safe wash for cedar, pressure-treated pine, and composite. Removes gray weathering and mildew without raising the grain. Surface ready for stain or seal in ~48 hours.',
       tags: ['Wood-safe pressure', 'Cedar · Pine · Composite', 'Stain-ready in 48 hrs', 'Re-stain add-on available'],
-      price: 219,
     },
   ];
   return (
@@ -233,15 +239,14 @@ function ServicesPage({ goto }) {
                   </ul>
                 </div>
                 <div className="side">
-                  <div className="price"><span className="lbl">Starting at</span>${s.price}</div>
                   <button className="btn btn-primary" onClick={() => goto('quote')}>Get a Quote <Icon.ArrowRight size={14} /></button>
                 </div>
               </div>
             ))}
           </div>
 
-          <div style={{marginTop: 48, background: 'white', border: '1px solid var(--line)', borderRadius: 16, padding: 36}}>
-            <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:32, alignItems:'center'}} className="faq-shell">
+          <div className="faq-wrap">
+            <div className="faq-shell">
               <div>
                 <div className="section-eyebrow">Common questions</div>
                 <h3 style={{fontSize:26, fontWeight:800, marginTop:8, letterSpacing:'-0.02em'}}>Answers before you have to ask.</h3>
@@ -282,24 +287,56 @@ function ServicesPage({ goto }) {
   );
 }
 
+// ============ REAL WORK (photos & videos from the field) ============
+function RealWorkSection({ goto, compact }) {
+  const media = useServiceReferenceMedia();
+  const photos = media.featured?.images?.length
+    ? media.featured.images
+    : media.images.slice(0, compact ? 6 : 12);
+  const videos = media.featured?.videos?.length
+    ? media.featured.videos
+    : media.videos.slice(0, compact ? 2 : 4);
+  const photoLimit = compact ? 6 : 12;
+  const videoLimit = compact ? 2 : 4;
+  if (!photos.length && !videos.length) return null;
+
+  return (
+    <section className="section real-work-section">
+      <div className="container">
+        <div className="section-head">
+          <div className="section-eyebrow">From the job site</div>
+          <h2>Real work, real results.</h2>
+          <p>
+            {compact
+              ? 'Recent photos and clips from jobs across Osceola County — straight from our crew, not a stock library.'
+              : 'Browse photos and footage from recent pressure washing jobs. Every file is from an actual visit.'}
+          </p>
+        </div>
+        {photos.length > 0 && (
+          <RealWorkPhotos files={photos} limit={photoLimit} />
+        )}
+        {videos.length > 0 && (
+          <div className="real-work-videos-block">
+            <h3 className="real-work-subhead">On-site footage</h3>
+            <RealWorkVideos files={videos} limit={videoLimit} />
+          </div>
+        )}
+        {compact && (
+          <div style={{ textAlign: 'center', marginTop: 40 }}>
+            <button className="btn btn-ghost" onClick={() => goto('gallery')}>
+              See all job photos & videos <Icon.ArrowRight size={14} />
+            </button>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
 // ============ GALLERY PAGE ============
 function GalleryPage({ goto }) {
-  const [filter, setFilter] = React.useState('all');
-  const items = [
-    { id: 1, cat: 'driveway', scene: 'driveway', caption: 'Driveway & walkway', meta: 'Poinciana · Sept \'25' },
-    { id: 2, cat: 'house', scene: 'siding', caption: 'Two-story vinyl siding', meta: 'Celebration · Sept \'25' },
-    { id: 3, cat: 'deck', scene: 'deck', caption: 'Cedar deck + railings', meta: 'St. Cloud · Oct \'25' },
-    { id: 4, cat: 'driveway', scene: 'driveway', caption: 'Paver driveway + apron', meta: 'Buenaventura Lakes · Oct \'25' },
-    { id: 5, cat: 'house', scene: 'siding', caption: 'Stucco front elevation', meta: 'Kissimmee · Nov \'25' },
-    { id: 6, cat: 'deck', scene: 'deck', caption: 'Pine privacy fence run', meta: 'St. Cloud · Nov \'25' },
-  ];
-  const filtered = filter === 'all' ? items : items.filter(i => i.cat === filter);
-  const filters = [
-    { id: 'all', label: 'All Work' },
-    { id: 'house', label: 'House Washing' },
-    { id: 'driveway', label: 'Driveway & Sidewalk' },
-    { id: 'deck', label: 'Deck & Fence' },
-  ];
+  const [view, setView] = React.useState('photos');
+  const media = useServiceReferenceMedia();
   return (
     <main>
       <section className="page-head">
@@ -309,23 +346,35 @@ function GalleryPage({ goto }) {
             <span className="sep">/</span>
             <span>Gallery</span>
           </div>
-          <h1>Before & after, drag to compare.</h1>
-          <p>Every photo is a real job from a real Osceola County neighbor. Grab the slider and see the difference.</p>
+          <h1>See the work for yourself.</h1>
+          <p>Job-site photos and on-site video — all from real Osceola County properties.</p>
         </div>
       </section>
 
       <section className="section">
         <div className="container">
-          <div className="filter-row">
-            {filters.map(f => (
-              <button key={f.id} className={'filter-pill' + (filter === f.id ? ' active' : '')} onClick={() => setFilter(f.id)}>{f.label}</button>
+          <div className="filter-row gallery-view-tabs">
+            {[
+              { id: 'photos', label: 'Job Photos' },
+              { id: 'videos', label: 'Videos' },
+            ].map(f => (
+              <button key={f.id} className={'filter-pill' + (view === f.id ? ' active' : '')} onClick={() => setView(f.id)}>{f.label}</button>
             ))}
           </div>
-          <div className="gallery-grid">
-            {filtered.map(it => (
-              <BeforeAfter key={it.id} scene={it.scene} caption={it.caption} meta={it.meta} />
-            ))}
-          </div>
+
+          {view === 'photos' && media.images.length > 0 && (
+            <>
+              <p className="gallery-media-note">{media.images.length} photos from recent jobs</p>
+              <RealWorkPhotos files={media.images} />
+            </>
+          )}
+
+          {view === 'videos' && media.videos.length > 0 && (
+            <>
+              <p className="gallery-media-note">{media.videos.length} clips from the field</p>
+              <RealWorkVideos files={media.videos} />
+            </>
+          )}
         </div>
       </section>
 
@@ -522,20 +571,6 @@ function QuotePage({ goto }) {
   const next = () => { if (validateStep(step)) setStep(s => Math.min(steps.length, s + 1)); };
   const back = () => setStep(s => Math.max(0, s - 1));
 
-  // Rough estimate
-  const basePrices = { 'House Washing': 249, 'Driveway & Sidewalk': 179, 'Deck & Fence': 219 };
-  const sqftMult = { 'Under 1,500': 1, '1,500–2,500': 1.25, '2,500–3,500': 1.55, '3,500+': 2.0 };
-  const addonPrice = { 'Gutter face cleaning': 80, 'Paver re-sand & seal': 220, 'Annual maintenance plan (–15%)': 0 };
-  const estimate = React.useMemo(() => {
-    const svcTotal = data.services.reduce((sum, s) => sum + (basePrices[s] || 0), 0);
-    const mult = sqftMult[data.sqft] || 1;
-    const addons = data.addons.reduce((sum, a) => sum + (addonPrice[a] || 0), 0);
-    let total = svcTotal * mult + addons;
-    if (data.addons.includes('Annual maintenance plan (–15%)')) total *= 0.85;
-    const low = Math.round(total * 0.9 / 10) * 10;
-    const high = Math.round(total * 1.15 / 10) * 10;
-    return { low, high };
-  }, [data.services, data.sqft, data.addons]);
 
   if (step === steps.length) {
     return (
@@ -553,11 +588,6 @@ function QuotePage({ goto }) {
                 <div className="success-check"><Icon.Check size={32} /></div>
                 <h3>Thanks, {data.name.split(' ')[0] || 'neighbor'}!</h3>
                 <p>Your request is in. Wade will give you a call at {data.phone} within a few hours with a confirmed quote and the next two available slots.</p>
-                <div className="estimate-card" style={{textAlign:'left', maxWidth:400, margin:'28px auto 0'}}>
-                  <div className="lbl">Ballpark estimate</div>
-                  <div className="range">${estimate.low} – ${estimate.high}</div>
-                  <div className="note">Final pricing is confirmed after a free on-site walk-through. No deposit required.</div>
-                </div>
                 <div style={{marginTop:32, display:'flex', gap:10, justifyContent:'center', flexWrap:'wrap'}}>
                   <button className="btn btn-ghost" onClick={() => goto('home')}>Back to home</button>
                   <a className="btn btn-primary" href="tel:+14076841194"><Icon.Phone size={14} /> Call us directly</a>
@@ -628,7 +658,7 @@ function QuotePage({ goto }) {
               {step === 1 && (
                 <div>
                   <h3>Tell us about the property.</h3>
-                  <p className="sub">This gets you a tighter estimate — we'll confirm on-site.</p>
+                  <p className="sub">A few details help us prepare before we call you.</p>
                   <div className="form-fields">
                     <div>
                       <label style={{fontSize:13, fontWeight:600, color:'var(--ink-700)', display:'block', marginBottom:8}}>Property type</label>
@@ -732,11 +762,6 @@ function QuotePage({ goto }) {
                     {data.preferredDate && <ReviewRow label="Preferred date" value={data.preferredDate} />}
                     {data.notes && <ReviewRow label="Notes" value={data.notes} />}
                   </div>
-                  <div className="estimate-card">
-                    <div className="lbl">Ballpark estimate</div>
-                    <div className="range">${estimate.low} – ${estimate.high}</div>
-                    <div className="note">Final pricing is confirmed after a free on-site walk-through. No deposit required.</div>
-                  </div>
                 </div>
               )}
             </div>
@@ -768,4 +793,4 @@ function ReviewRow({ label, value }) {
   );
 }
 
-Object.assign(window, { HomePage, ServicesPage, GalleryPage, ContactPage, QuotePage });
+Object.assign(window, { HomePage, ServicesPage, GalleryPage, ContactPage, QuotePage, RealWorkSection });
