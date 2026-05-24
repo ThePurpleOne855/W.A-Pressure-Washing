@@ -260,12 +260,17 @@ const SCENES = {
 };
 
 // ============ SERVICE CARD ============
-function ServiceCard({ icon, title, desc, onClick }) {
+function ServiceCard({ icon, title, desc, priceFrom, onClick }) {
   return (
     <div className="service-card" onClick={onClick} style={{cursor:'pointer'}}>
       <div className="service-icon-wrap">{icon}</div>
       <h3>{title}</h3>
       <p>{desc}</p>
+      <div className="price-from">
+        <span className="label">Starting at</span>
+        <span className="amount">${priceFrom}</span>
+      </div>
+      <p className="price-note">Final price depends on area size, surface condition, and job complexity.</p>
       <a className="learn">Learn more <Icon.ArrowRight size={14} /></a>
     </div>
   );

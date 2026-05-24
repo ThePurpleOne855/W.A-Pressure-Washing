@@ -1,3 +1,12 @@
+// Starting prices — $85 baseline; higher tiers reflect service complexity
+const SERVICE_PRICES = {
+  'House Washing': 95,
+  'Driveway & Sidewalk': 85,
+  'Deck & Fence': 105,
+};
+const PRICING_BASELINE = 85;
+const PRICING_AREA_NOTE = 'Final price depends on area size, surface condition, and job complexity.';
+
 // ============ HOME PAGE ============
 function HomePage({ goto }) {
   return (
@@ -59,18 +68,21 @@ function HomePage({ goto }) {
               icon={<Icon.Home size={26} />}
               title="House Washing"
               desc="Soft-wash siding, stucco, brick, and soffits. Removes algae, pollen, and Florida's signature black streaks without damaging paint or plants."
+              priceFrom={SERVICE_PRICES['House Washing']}
               onClick={() => goto('services')}
             />
             <ServiceCard
               icon={<Icon.Road size={26} />}
               title="Driveway & Sidewalk"
               desc="Surface cleaner + high-pressure rinse lifts oil stains, tire marks, and ground-in dirt from concrete, pavers, and walkways."
+              priceFrom={SERVICE_PRICES['Driveway & Sidewalk']}
               onClick={() => goto('services')}
             />
             <ServiceCard
               icon={<Icon.Deck size={26} />}
               title="Deck & Fence"
               desc="Low-pressure wood-safe cleaning restores your deck and fence without raising the grain or stripping stain. Ready for re-seal in 48 hours."
+              priceFrom={SERVICE_PRICES['Deck & Fence']}
               onClick={() => goto('services')}
             />
           </div>
@@ -197,18 +209,24 @@ function ServicesPage({ goto }) {
       title: 'House Washing',
       desc: 'Soft-wash cleaning for vinyl, stucco, brick, Hardie board, and painted wood. Lifts algae, pollen, mildew, and the black streaks Florida humidity creates, without damaging landscaping or finishes.',
       tags: ['Soft-wash safe', 'Vinyl · Stucco · Brick · Hardie', 'Includes soffit & gutter face', 'Plant pre-rinse'],
+      price: SERVICE_PRICES['House Washing'],
+      complexity: 'Multi-surface soft-wash',
     },
     {
       icon: <Icon.Road size={56} />,
       title: 'Driveway & Sidewalk',
       desc: 'Commercial surface cleaner for even, streak-free flatwork. Optional post-treatment seal for pavers. Tackles oil spots, rust stains, and tire marks that a garden hose can\'t touch.',
       tags: ['Concrete · Pavers · Brick', 'Oil & rust spot treatment', 'Optional paver re-sand & seal', 'HOA-compliant'],
+      price: SERVICE_PRICES['Driveway & Sidewalk'],
+      complexity: 'Flatwork · baseline pricing',
     },
     {
       icon: <Icon.Deck size={56} />,
       title: 'Deck & Fence',
       desc: 'Low-pressure wood-safe wash for cedar, pressure-treated pine, and composite. Removes gray weathering and mildew without raising the grain. Surface ready for stain or seal in ~48 hours.',
       tags: ['Wood-safe pressure', 'Cedar · Pine · Composite', 'Stain-ready in 48 hrs', 'Re-stain add-on available'],
+      price: SERVICE_PRICES['Deck & Fence'],
+      complexity: 'Wood-safe · detail work',
     },
   ];
   return (
@@ -227,6 +245,12 @@ function ServicesPage({ goto }) {
 
       <section className="section">
         <div className="container">
+          <div className="pricing-banner">
+            <p>
+              <strong>Pressure washing from ${PRICING_BASELINE}.</strong> Starting rates below reflect how involved each service is.
+              {PRICING_AREA_NOTE}
+            </p>
+          </div>
           <div className="svc-detail-list">
             {services.map((s, i) => (
               <div className="svc-detail" key={i}>
@@ -239,6 +263,11 @@ function ServicesPage({ goto }) {
                   </ul>
                 </div>
                 <div className="side">
+                  <div className="price">
+                    <span className="lbl">Starting at</span>${s.price}
+                  </div>
+                  <p className="price-detail">{s.complexity}</p>
+                  <p className="price-note">{PRICING_AREA_NOTE}</p>
                   <button className="btn btn-primary" onClick={() => goto('quote')}>Get a Quote <Icon.ArrowRight size={14} /></button>
                 </div>
               </div>
