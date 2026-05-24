@@ -387,6 +387,12 @@ img { display: block; max-width: 100%; }
 }
 .service-card .price-from .label { font-size: 12px; color: var(--ink-400); font-weight: 500; }
 .service-card .price-from .amount { font-size: 22px; font-weight: 700; color: var(--navy-900); }
+.service-card .price-note {
+  margin-top: 6px;
+  font-size: 11.5px;
+  color: var(--ink-400);
+  font-style: italic;
+}
 .service-card .learn {
   margin-top: 20px;
   display: inline-flex;
@@ -1082,12 +1088,57 @@ img { display: block; max-width: 100%; }
   color: var(--navy-800);
   font-weight: 500;
 }
+.pricing-banner {
+  background: var(--blue-50);
+  border: 1px solid #D4E4F7;
+  border-radius: var(--r-md);
+  padding: 18px 22px;
+  margin-bottom: 28px;
+  font-size: 15px;
+  color: var(--ink-700);
+  line-height: 1.55;
+}
+.pricing-banner strong { color: var(--navy-900); }
 .svc-detail .side {
   display: flex; flex-direction: column; align-items: flex-end;
-  min-width: 140px;
+  gap: 8px;
+  min-width: 200px;
 }
 @media (max-width: 768px) {
   .svc-detail .side { align-items: flex-start; }
+}
+.svc-detail .price {
+  font-family: var(--font-head);
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--navy-900);
+  text-align: right;
+}
+.svc-detail .price .lbl {
+  font-size: 12px;
+  color: var(--ink-400);
+  font-weight: 500;
+  display: block;
+  margin-bottom: 2px;
+}
+.svc-detail .price-detail {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--blue-500);
+  text-align: right;
+}
+.svc-detail .price-note {
+  font-size: 11.5px;
+  color: var(--ink-400);
+  font-style: italic;
+  line-height: 1.45;
+  text-align: right;
+  max-width: 220px;
+}
+@media (max-width: 768px) {
+  .svc-detail .price,
+  .svc-detail .price-detail,
+  .svc-detail .price-note { text-align: left; }
 }
 
 /* ============ CONTACT PAGE ============ */
